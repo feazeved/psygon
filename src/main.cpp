@@ -9,7 +9,7 @@ SDL_AppResult	SDL_AppInit(void **appstate, int argc, char **argv)
 {
 	(void)argc; (void)argv;
 
-	AppState*	state = new AppState();
+	AppState*	app = new AppState();
 
 	SDL_SetAppMetadata("Deckbuilder", "0.0", "com.example.mygame");
 
@@ -18,35 +18,44 @@ SDL_AppResult	SDL_AppInit(void **appstate, int argc, char **argv)
 		return (SDL_APP_FAILURE);
 	}
 
-	if (!SDL_CreateWindowAndRenderer("Deckbuilder", 840, 720, SDL_WINDOW_RESIZABLE, &state->window, &state->renderer)) {
+	if (!SDL_CreateWindowAndRenderer("Deckbuilder", 840, 720, SDL_WINDOW_RESIZABLE, &app->window, &app->renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return (SDL_APP_FAILURE);
     }
 
-	SDL_SetRenderLogicalPresentation(state->renderer, 640, 480, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(app->renderer, 640, 480, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-	*appstate = state;
+	*appstate = app;
 	return (SDL_APP_CONTINUE);
 }
 
 /* This function runs when a new event (mouse input, keypresses, etc) occurs. */
 SDL_AppResult	SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-	AppState*	state = static_cast<AppState*>(appstate);
+	AppState*	app = static_cast<AppState*>(appstate);
 
-	switch (event->type)
+	if (event->type == SDL_EVENT_QUIT)
+		return (SDL_APP_SUCCESS);
+
+	// These will be removed once everything else is working
+	if (event->type == SDL_EVENT_KEY_DOWN)
 	{
-		case (SDL_EVENT_QUIT):
-			return (SDL_APP_SUCCESS);
-
-		case (SDL_EVENT_KEY_DOWN):
-			state->keys[event->key.scancode] = true;
-			break ;
-
-		case (SDL_EVENT_KEY_UP):
-			state->keys[event->key.scancode] = false;
-			break ;
+		app->keys[event->key.scancode] = true;
 	}
+	if (event->type == SDL_EVENT_KEY_UP)
+	{
+		app->keys[event->key.scancode] = false;
+	}
+
+	/*
+	switch (app->state)
+	{
+		//case (GameState::STATE_MENU):		handleMenuEvent(app, event);		break ;
+		//case (GameState::STATE_PLAYING):	handlePlayingEvent(app, event);		break ;
+		//case (GameState::STATE_SETTINGS):	handleSettingsEvent(app, event);	break ;
+		default: SDL_Log("Not everything implemented yet.\n"); break ;
+	}
+	*/
 
 	return (SDL_APP_CONTINUE);
 }
@@ -54,23 +63,22 @@ SDL_AppResult	SDL_AppEvent(void *appstate, SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult	SDL_AppIterate(void *appstate)
 {
-	(void)appstate;
-	AppState*	state = static_cast<AppState*>(appstate);
+	AppState*	app = static_cast<AppState*>(appstate);
 
-	if (state->keys[SDL_SCANCODE_ESCAPE])
-	{
+	// This will be removed when everything else is implemented
+	if (app->keys[SDL_SCANCODE_ESCAPE])
 		return (SDL_APP_SUCCESS);
+
+	/*
+	switch (app->state)
+	{
+		//case (GameState::STATE_MENU):		updateMenu(app);		renderMenu(app);		break ;
+		//case (GameState::STATE_PLAYING):	updatePlaying(app);		renderPlaying(app);		break ;
+		//case (GameState::STATE_SETTINGS):	updateSettings(app);	renderSettings(app);	break ;
+		//case (GameState::STATE_QUIT):		return (SDL_APP_SUCCESS);
+		default: SDL_Log("Not everything implemented yet.\n"); break ;
 	}
-
-
-
-	SDL_SetRenderDrawColorFloat(state->renderer, 255, 255, 255, SDL_ALPHA_TRANSPARENT_FLOAT); /* new color, full alpha. */
-
-	/* clear the window to the draw color. */
-	SDL_RenderClear(state->renderer);
-
-	/* put the newly-cleared rendering on the screen. */
-	SDL_RenderPresent(state->renderer);
+	*/
 
 	return (SDL_APP_CONTINUE);
 }
