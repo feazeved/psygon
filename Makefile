@@ -1,15 +1,15 @@
-CC = c++
+CC          = c++
 
-LD_FLAGS	= -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL3
-CFLAGS		= -Wall -Wextra -Werror -I/usr/local/include -std=c++23
+CFLAGS      = -Wall -Wextra -Werror -std=c++23 $(shell pkg-config --cflags sdl3 sdl3-image)
+LD_FLAGS    = $(shell pkg-config --libs sdl3 sdl3-image)
 
-NAME		= deckbuilder
+NAME        = deckbuilder
 
-SRC_DIR		= src
-OBJ_DIR		= obj
+SRC_DIR     = src
+OBJ_DIR     = obj
 
-SRC			= main.cpp AppState.cpp
-OBJ			= $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
+SRC         = main.cpp AppState.cpp handleEvents.cpp render.cpp
+OBJ         = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 
 all: $(NAME)
 

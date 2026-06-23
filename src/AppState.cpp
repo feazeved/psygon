@@ -1,4 +1,5 @@
 #include "AppState.hpp"
+#include <SDL3_image/SDL_image.h>
 
 AppState::AppState() :
 	window(nullptr), renderer(nullptr), state(GameState::STATE_MENU), backgroundTexture(nullptr)
