@@ -1,9 +1,9 @@
 #pragma once
 
-#include "AppState.hpp"
+#include "App.hpp"
 
 namespace handleEvents {
 
-	void	handleMenuEvent(AppState& app, SDL_Event& event);
+	void	handleMenuEvent(App& app, SDL_Event& event);
 
 }

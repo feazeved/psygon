@@ -8,7 +8,7 @@ NAME        = deckbuilder
 SRC_DIR     = src
 OBJ_DIR     = obj
 
-SRC         = main.cpp AppState.cpp handleEvents.cpp render.cpp
+SRC         = main.cpp App.cpp handleEvents.cpp render.cpp
 OBJ         = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 
 all: $(NAME)
