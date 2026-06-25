@@ -3,7 +3,7 @@ CC          = c++
 CFLAGS      = -Wall -Wextra -Werror -std=c++23 $(shell pkg-config --cflags sdl3 sdl3-image)
 LD_FLAGS    = $(shell pkg-config --libs sdl3 sdl3-image)
 
-NAME        = deckbuilder
+NAME        = psygon
 
 SRC_DIR     = src
 OBJ_DIR     = obj

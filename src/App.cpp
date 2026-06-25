@@ -5,8 +5,8 @@
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
 
-const int	App::winWidth = 1920;
-const int	App::winHeight = 1080;
+const int	App::winWidth = 1280;
+const int	App::winHeight = 720;
 
 App::App() :
 	window(nullptr), renderer(nullptr), state(GameState::STATE_MENU), backgroundTexture(nullptr), keys(nullptr)
@@ -14,7 +14,7 @@ App::App() :
 	if (!SDL_Init(SDL_INIT_VIDEO))
 		throw App::InitException("SDL_Init");
 
-	if (!SDL_CreateWindowAndRenderer("Deckbuilder", App::winWidth, App::winHeight, SDL_WINDOW_RESIZABLE, &window, &renderer))
+	if (!SDL_CreateWindowAndRenderer("PSYGON", App::winWidth, App::winHeight, SDL_WINDOW_RESIZABLE, &window, &renderer))
 		throw App::InitException("SDL_CreateWindowAndRenderer");
 
 	if (!SDL_SetRenderLogicalPresentation(renderer, App::winWidth, App::winHeight, SDL_LOGICAL_PRESENTATION_STRETCH))

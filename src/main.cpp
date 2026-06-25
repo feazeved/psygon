@@ -11,7 +11,7 @@
 SDL_AppResult	SDL_AppInit(void **appstate, int argc, char **argv)
 {
 	(void)argc; (void)argv;
-	SDL_SetAppMetadata("Deckbuilder", "0.0", "com.example.mygame");
+	SDL_SetAppMetadata("PSYGON", "0.0", "com.example.mygame");
 
 	App*	App = nullptr;
 
