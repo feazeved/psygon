@@ -1,14 +1,14 @@
 CC          = c++
 
-CFLAGS      = -Wall -Wextra -Werror -std=c++23 $(shell pkg-config --cflags sdl3 sdl3-image)
-LD_FLAGS    = $(shell pkg-config --libs sdl3 sdl3-image)
+CFLAGS      = -Wall -Wextra -Werror -std=c++23 $(shell pkg-config --cflags sdl3 sdl3-image sdl3-ttf)
+LD_FLAGS    = $(shell pkg-config --libs sdl3 sdl3-image sdl3-ttf)
 
 NAME        = psygon
 
 SRC_DIR     = src
 OBJ_DIR     = obj
 
-SRC         = main.cpp App.cpp handleEvents.cpp render.cpp
+SRC         = main.cpp App.cpp handleEvents.cpp render.cpp Menu.cpp
 OBJ         = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 
 all: $(NAME)

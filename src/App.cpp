@@ -9,7 +9,7 @@ const int	App::winWidth = 1280;
 const int	App::winHeight = 720;
 
 App::App() :
-	window(nullptr), renderer(nullptr), state(GameState::STATE_MENU), backgroundTexture(nullptr), keys(nullptr)
+	window(nullptr), renderer(nullptr), backgroundTexture(nullptr), state(GameState::STATE_MENU), keys(nullptr)
 {
 	if (!SDL_Init(SDL_INIT_VIDEO))
 		throw App::InitException("SDL_Init");
@@ -28,21 +28,23 @@ App::App() :
 	if (!SDL_SetWindowAspectRatio(window, aspect, aspect))
 		throw App::InitException("SDL_SetWindowAspectRatio");
 
+	font = TTF_OpenFont("assets/menu_font.ttf", 24);
+	if (!font)
+		throw App::InitException("TTF_OpenFont");
+
+	mainMenu.addItem("Play", {100, 280, 300, 80}, GameState::STATE_PLAYING);
+	mainMenu.addItem("Settings", {100, 380, 300, 80}, GameState::STATE_SETTINGS);
+	mainMenu.addItem("Exit", {100, 480, 300, 80}, GameState::STATE_QUIT);
 	keys = SDL_GetKeyboardState(NULL);
 }
 
 App::~App()
 {
+	TTF_CloseFont(font);
 	SDL_DestroyTexture(backgroundTexture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 }
-
-
-
-
-
-
 
 App::InitException::InitException(const std::string& where) : message("failure initializing " + where) { }
 
