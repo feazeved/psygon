@@ -84,6 +84,11 @@ async fn main() {
 
 use macroquad::prelude::*;
 
+enum Location {
+    Menu,
+    Game,
+}
+
 fn conf() -> Conf {
     Conf {
         window_title: "Psygon!".to_string(),
@@ -94,5 +99,19 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-	
+    set_pc_assets_folder("../assets");
+
+    let mut location = Location::Menu;
+    let texture = load_texture("background.png").await.unwrap();
+
+    loop {
+        clear_background(LIGHTGRAY);
+
+        match location {
+            Location::Menu => draw_texture(&texture, 0.0, 0.0, WHITE),
+            Location::Game => (),
+        }
+
+        next_frame().await;
+    }
 }
