@@ -103,6 +103,7 @@ async fn main() {
 
     let mut location = Location::Menu;
     let texture = load_texture("background.png").await.unwrap();
+    let mut test: i32 = 0;
 
     loop {
         clear_background(LIGHTGRAY);
@@ -110,6 +111,11 @@ async fn main() {
         match location {
             Location::Menu => draw_texture(&texture, 0.0, 0.0, WHITE),
             Location::Game => (),
+        }
+
+        if test == 0 {
+            location = Location::Game;
+            test += 1;
         }
 
         next_frame().await;
