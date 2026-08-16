@@ -99,9 +99,11 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-    set_pc_assets_folder("../assets");
+    #[cfg(not(target_arch = "wasm32"))]
+    set_pc_assets_folder("assets");
 
     let mut location = Location::Menu;
+
     let texture = load_texture("background.png").await.unwrap();
     let mut test: i32 = 0;
 
@@ -110,7 +112,7 @@ async fn main() {
 
         match location {
             Location::Menu => draw_texture(&texture, 0.0, 0.0, WHITE),
-            Location::Game => (),
+            Location::Game => draw_texture(&texture, 0.0, 0.0, WHITE),
         }
 
         if test == 0 {

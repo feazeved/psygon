@@ -30,7 +30,8 @@ jobs:
         mkdir -p ./deploy
         cp target/wasm32-unknown-unknown/release/psygon.wasm ./deploy/
         cp index.html ./deploy/
-        if [ -d "assets" ]; then cp -r assets ./deploy/; fi
+        cp mq_js_bundle.js ./deploy/
+        if [ -d "assets" ]; then cp -r assets/* ./deploy/; fi
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
