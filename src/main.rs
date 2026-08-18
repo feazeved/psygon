@@ -82,17 +82,21 @@ async fn main() {
 }
 */
 
-use macroquad::prelude::*;
+mod buttons;
+mod game;
+mod rendering;
 
-enum Location {
-    Menu,
-    Game,
-}
+use game::Game;
+use macroquad::prelude::*;
+use rendering::Renderer;
 
 fn conf() -> Conf {
     Conf {
         window_title: "Psygon!".to_string(),
         fullscreen: false,
+        window_resizable: false,
+        window_width: 1280,
+        window_height: 720,
         ..Default::default()
     }
 }
@@ -100,25 +104,14 @@ fn conf() -> Conf {
 #[macroquad::main(conf)]
 async fn main() {
     #[cfg(not(target_arch = "wasm32"))]
-    set_pc_assets_folder("assets");
+    macroquad::file::set_pc_assets_folder("../assets");
 
-    let mut location = Location::Menu;
-
-    let texture = load_texture("background.png").await.unwrap();
-    let mut test: i32 = 0;
+    let mut game = Game::new();
+    let renderer = Renderer::new().await;
 
     loop {
-        clear_background(LIGHTGRAY);
-
-        match location {
-            Location::Menu => draw_texture(&texture, 0.0, 0.0, WHITE),
-            Location::Game => draw_texture(&texture, 0.0, 0.0, WHITE),
-        }
-
-        if test == 0 {
-            location = Location::Game;
-            test += 1;
-        }
+        game.update();
+        renderer.draw(&game);
 
         next_frame().await;
     }
