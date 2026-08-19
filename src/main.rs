@@ -82,8 +82,9 @@ async fn main() {
 }
 */
 
-mod buttons;
+mod button;
 mod game;
+mod menu;
 mod rendering;
 
 use game::Game;
@@ -106,8 +107,8 @@ async fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     macroquad::file::set_pc_assets_folder("../assets");
 
-    let mut game = Game::new();
-    let renderer = Renderer::new().await;
+    let mut game = Game::new().await;
+    let renderer = Renderer {};
 
     loop {
         game.update();

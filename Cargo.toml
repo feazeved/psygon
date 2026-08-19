@@ -3,5 +3,8 @@ name = "psygon"
 version = "0.1.0"
 edition = "2024"
 
+[profile.dev]
+debug = "line-tables-only"
+
 [dependencies]
 macroquad = "0.4.16"
