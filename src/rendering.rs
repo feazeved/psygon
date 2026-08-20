@@ -10,7 +10,7 @@ impl Renderer {
 
         match game.state() {
             State::Menu => game.main_menu.draw(),
-            State::Desk => {}
+            State::Desk => game.desk.draw(),
             State::Settings => {}
         }
     }

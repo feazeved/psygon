@@ -8,11 +8,13 @@ use state::State;
 
 use crate::{
     button::{ButtonAction::Play, ButtonAction::Quit, ButtonAction::Settings},
+    desk::Desk,
     menu::Menu,
 };
 
 pub struct Game {
     pub main_menu: Menu,
+    pub desk: Desk,
     game_state: State,
 }
 
@@ -20,6 +22,7 @@ impl Game {
     pub async fn new() -> Self {
         Self {
             main_menu: Menu::new().await,
+            desk: Desk::new().await,
             game_state: State::Menu,
         }
     }

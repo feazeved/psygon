@@ -17,7 +17,7 @@ pub struct Menu {
 
 impl Menu {
     fn menu_rect(y_delta: f32) -> Rect {
-        let sw = screen_width();
+        let sw = screen_width(); // maybe have these as consts in main?
         let sh = screen_height();
 
         Rect::new(
