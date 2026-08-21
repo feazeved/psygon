@@ -5,4 +5,5 @@ pub enum State {
     Menu,
     Desk,
     Settings,
+    Quests,
 }

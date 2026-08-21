@@ -5,6 +5,7 @@ pub enum ButtonAction {
     Play,
     Settings,
     Quit,
+    Start,
 }
 
 pub struct Button {

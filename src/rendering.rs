@@ -11,6 +11,7 @@ impl Renderer {
         match game.state() {
             State::Menu => game.main_menu.draw(),
             State::Desk => game.desk.draw(),
+            State::Quests => (),
             State::Settings => {}
         }
     }
