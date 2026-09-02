@@ -28,7 +28,7 @@ jobs:
     - name: Prepare Deployment Directory
       run: |
         mkdir -p ./deploy
-        cp target/wasm32-unknown-unknown/release/psygon.wasm ./deploy/
+        cp target/wasm32-unknown-unknown/release/psygon2.wasm ./deploy/
         cp index.html ./deploy/
         cp mq_js_bundle.js ./deploy/
         if [ -d "assets" ]; then cp -r assets/* ./deploy/; fi
