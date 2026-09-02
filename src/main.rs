@@ -1,96 +1,25 @@
-/*use std::cmp::Ordering;
-use std::io;
-
-use rand::Rng;
-
-/// This a little program that lets the user guess a secret random number between 1 and 100 (inclusive)
-fn main() {
-    println!("Guess the number!");
-
-    let secret_number = rand::thread_rng().gen_range(1..=100);
-
-    loop {
-        let mut guess = String::new();
-
-        println!("Please input your guess.");
-
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
-
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        println!("You guessed: {guess}");
-
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("Too small!"),
-            Ordering::Greater => println!("Too big!"),
-            Ordering::Equal => {
-                println!("You win!");
-                break;
-            }
-        }
-    }
-}
-*/
-
-/*
-use macroquad::prelude::*;
-
-fn conf() -> Conf {
-    Conf {
-        window_title: "Psygon!".to_string(),
-        fullscreen: false,
-        ..Default::default()
-    }
-}
-
-#[macroquad::main(conf)]
-async fn main() {
-    let (x, y) = (screen_width() / 2., screen_height() / 2.);
-    let r: f32 = 70.;
-    let circle = Circle::new(x, y, r);
-    let mut score = 0;
-
-    loop {
-        clear_background(GRAY);
-
-        draw_text("Clicker Game", screen_width() / 2. - 100., 100., 50., WHITE);
-        draw_text(
-            format!("Clicks: {}", score).as_str(),
-            screen_width() / 2. - 100.,
-            500.,
-            50.,
-            WHITE,
-        );
-
-        draw_circle(x, y, r, RED);
-
-        if is_mouse_button_pressed(MouseButton::Left) {
-            let (mouse_x, mouse_y) = mouse_position();
-
-            if circle.contains(&Vec2::new(mouse_x, mouse_y)) {
-                score += 1;
-            }
-        }
-
-        next_frame().await;
-    }
-}
-*/
-
-mod button;
+mod assets;
+mod combat;
 mod desk;
+mod entities;
 mod game;
+mod input;
+mod layout;
+mod level;
+mod level_data;
 mod menu;
-mod rendering;
+mod quests;
+mod renderer;
+mod sprite_sheet;
+mod state;
+mod ui;
 
+use assets::Assets;
 use game::Game;
+use input::Input;
+use layout::Layout;
 use macroquad::{prelude::*, rand::srand};
-use rendering::Renderer;
+use renderer::Renderer;
 
 fn conf() -> Conf {
     Conf {
@@ -109,12 +38,24 @@ async fn main() {
     macroquad::file::set_pc_assets_folder("assets");
 
     srand(2147483647);
-    let mut game = Game::new().await;
-    let renderer = Renderer {};
+    let renderer = Renderer::new();
+    let assets = Assets::new().await;
+    let layout = Layout::new();
+    let mut game = Game::new(assets, layout);
+    let mut input = Input::new();
 
     loop {
-        game.update();
-        renderer.draw(&game);
+        input.update(game.layout());
+        game.update(&input);
+
+        if game.should_stop() {
+            break;
+        }
+
+        renderer.begin();
+        clear_background(BLACK);
+        game.draw();
+        renderer.end();
 
         next_frame().await;
     }

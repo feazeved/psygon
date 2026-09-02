@@ -1,78 +1,75 @@
+use crate::assets::MenuAssets;
+use crate::input::Input;
+use crate::layout::Layout;
+use crate::renderer::draw_background;
+use crate::state::Transition;
+use crate::ui::*;
 use macroquad::prelude::*;
 
-use crate::button::{Button, ButtonAction};
-
-const BUTTON_WIDTH_PCT: f32 = 0.20;
-const BUTTON_HEIGHT_PCT: f32 = 0.10;
-const BUTTON_X_PCT: f32 = 0.20;
-
-const PLAY_Y_PCT: f32 = 0.20;
-const SETTINGS_Y_PCT: f32 = 0.40;
-const QUIT_Y_PCT: f32 = 0.60;
-
 pub struct Menu {
-    background: Texture2D,
-    buttons: [Button; 3],
+    play_button: LabeledButton,
+    settings_button: LabeledButton,
+    quit_button: LabeledButton,
 }
 
 impl Menu {
-    fn menu_rect(y_delta: f32) -> Rect {
-        let sw = screen_width(); // maybe have these as consts in main?
-        let sh = screen_height();
-
-        Rect::new(
-            sw * BUTTON_X_PCT,
-            sh * y_delta,
-            sw * BUTTON_WIDTH_PCT,
-            sh * BUTTON_HEIGHT_PCT,
-        )
-    }
-
-    pub async fn new() -> Self {
-        let background = load_texture("menu/background.png")
-            .await
-            .expect("Failed to load menu  background texture");
-
-        let buttons = [
-            (Button::new("Play!", Menu::menu_rect(PLAY_Y_PCT), ButtonAction::Play)),
-            (Button::new(
-                "Settings",
-                Menu::menu_rect(SETTINGS_Y_PCT),
-                ButtonAction::Settings,
-            )),
-            (Button::new("Quit", Menu::menu_rect(QUIT_Y_PCT), ButtonAction::Quit)),
-        ];
+    pub fn new(layout: &Layout) -> Self {
+        let button_size = vec2(240.0, 80.0);
         Self {
-            background,
-            buttons,
+            play_button: LabeledButton::new(
+                "PLAY!",
+                layout.center_left(button_size, 150.0) + vec2(0.0, -150.0),
+                button_size,
+                ButtonAction::Menu(MenuAction::Play),
+            ),
+
+            settings_button: LabeledButton::new(
+                "SETTINGS",
+                layout.center_left(button_size, 150.0) + vec2(0.0, 0.0),
+                button_size,
+                ButtonAction::Menu(MenuAction::Settings),
+            ),
+
+            quit_button: LabeledButton::new(
+                "QUIT",
+                layout.center_left(button_size, 150.0) + vec2(0.0, 150.0),
+                button_size,
+                ButtonAction::Menu(MenuAction::Quit),
+            ),
         }
     }
 
-    pub fn draw(&self) {
-        draw_texture_ex(
-            &self.background,
-            0.,
-            0.,
-            WHITE,
-            DrawTextureParams {
-                dest_size: Some(vec2(screen_width(), screen_height())),
-                ..Default::default()
-            },
-        );
-
-        for button in &self.buttons {
-            button.draw();
-        }
+    pub fn draw(&self, assets: &MenuAssets) {
+        draw_background(&assets.background);
+        self.play_button.draw();
+        self.settings_button.draw();
+        self.quit_button.draw();
     }
 
-    pub fn update(&self) -> Option<ButtonAction> {
-        if is_mouse_button_pressed(MouseButton::Left) {
-            for button in &self.buttons {
-                if button.is_hovered() {
-                    return Some(button.action);
-                }
-            }
+    pub fn update(&mut self, input: &Input) -> Option<Transition> {
+        let action = self
+            .play_button
+            .update(input)
+            .or_else(|| self.settings_button.update(input))
+            .or_else(|| self.quit_button.update(input));
+
+        if let Some(action) = action {
+            return Self::opt_transition_from_action(action);
         }
+
+        if input.key_pressed(KeyCode::Escape) {
+            return Some(Transition::Quit);
+        }
+
         None
+    }
+
+    fn opt_transition_from_action(action: ButtonAction) -> Option<Transition> {
+        match action {
+            ButtonAction::Menu(MenuAction::Play) => Some(Transition::Desk),
+            ButtonAction::Menu(MenuAction::Settings) => Some(Transition::Desk),
+            ButtonAction::Menu(MenuAction::Quit) => Some(Transition::Quit),
+            _ => None,
+        }
     }
 }

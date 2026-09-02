@@ -1,63 +1,59 @@
-mod card;
-mod combat;
-mod enemy;
-mod player;
-pub mod state;
-
-use macroquad::rand::rand;
-use state::State;
-
-use crate::{
-    button::{ButtonAction::Play, ButtonAction::Quit, ButtonAction::Settings},
-    desk::{Desk, DeskAction::Main, DeskAction::Start},
-    menu::Menu,
-};
+use crate::assets::Assets;
+use crate::desk::Desk;
+use crate::input::Input;
+use crate::layout::Layout;
+use crate::level::Level;
+use crate::menu::Menu;
+use crate::quests::Quests;
+use crate::state::{State, Transition};
 
 pub struct Game {
-    pub main_menu: Menu,
-    pub desk: Desk,
-    game_state: State,
+    state: State,
+    assets: Assets,
+    layout: Layout,
+
+    stop: bool,
 }
 
 impl Game {
-    pub async fn new() -> Self {
+    pub fn new(assets: Assets, layout: Layout) -> Self {
         Self {
-            main_menu: Menu::new().await,
-            desk: Desk::new().await,
-            game_state: State::Menu,
+            state: State::Menu(Menu::new(&layout)),
+            assets: assets,
+            layout: layout,
+            stop: false,
         }
     }
 
-    pub fn state(&self) -> &State {
-        &self.game_state
-    }
-
-    pub fn update(&mut self) {
-        match self.game_state {
-            State::Menu => self.update_menu(),
-            State::Desk => self.update_desk(),
-            State::Quests => (),
-            State::Settings => {}
+    pub fn update(&mut self, input: &Input) {
+        if let Some(transition) = self.state.update(input) {
+            self.transition(transition);
         }
     }
 
-    fn update_desk(&mut self) {
-        match self.desk.update() {
-            Some(Main) => self.game_state = State::Menu,
-            Some(Start) => self.game_state = State::Quests,
-            None => (),
-        }
+    pub fn draw(&self) {
+        self.state.draw(&self.assets);
     }
 
-    fn update_menu(&mut self) {
-        match self.main_menu.update() {
-            Some(Play) => {
-                self.game_state = State::Desk;
-                self.desk.which = rand();
+    pub fn layout(&self) -> &Layout {
+        &self.layout
+    }
+
+    pub fn should_stop(&self) -> bool {
+        self.stop
+    }
+
+    fn transition(&mut self, transition: Transition) {
+        match transition {
+            Transition::Quit => self.stop = true,
+            Transition::Desk => self.state = State::Desk(Desk::new(&self.layout)),
+            Transition::Menu => self.state = State::Menu(Menu::new(&self.layout)),
+            Transition::Quests => {
+                self.state = State::Quests(Quests::new(&self.layout, &self.assets.quests))
             }
-            Some(Settings) => self.game_state = State::Settings,
-            Some(Quit) => std::process::exit(0),
-            _ => (),
+            Transition::Levels(n) => {
+                self.state = State::Playing(Level::new(n, &self.layout, &self.assets.level))
+            }
         }
     }
 }
